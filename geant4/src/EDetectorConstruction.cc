@@ -9,10 +9,18 @@ EDetectorConstruction::EDetectorConstruction()
     fMessenger->DeclareProperty("frontSpace", frontSpaceR, "Front space between crystal and cap (mm)");
     fMessenger->DeclareProperty("capThickness", capThicknessR, "Thickness of the cap (mm)");
 
-    frontDeadLayerR = 0.7;
-    sideDeadLayerR = 0.7;
-    frontSpaceR = 3.0;
-    capThicknessR = 1.0;
+    fMessenger->DeclareProperty("sampleMaterial", sampleMaterial, "Sample material from Geant4 material list (e.g. G4_Ti)");
+    fMessenger->DeclareProperty("sampleDiameter", sampleDiameterR, "Sample diameter (mm)");
+    fMessenger->DeclareProperty("sampleHeight", sampleThicknessR, "Sample thickness (mm)");
+
+    frontDeadLayerR = 1.6;
+    sideDeadLayerR = 2.1;
+    frontSpaceR = 4.2;
+    capThicknessR = 1.3;
+
+    sampleMaterial = "G4_Ti";
+    sampleDiameterR = 27.4;
+    sampleThicknessR = 5.71;
 }
 
 EDetectorConstruction::~EDetectorConstruction()
@@ -27,6 +35,9 @@ G4VPhysicalVolume *EDetectorConstruction::Construct()
     G4double frontSpace = frontSpaceR * mm;
     G4double capThickness = capThicknessR * mm;
 
+    G4double sampleDiameter = sampleDiameterR * mm;
+    G4double sampleThickness = sampleThicknessR * mm;
+
     G4bool checkOverlaps = true;
 
     // Define materials
@@ -34,6 +45,9 @@ G4VPhysicalVolume *EDetectorConstruction::Construct()
     G4Material *MatWorld = nist->FindOrBuildMaterial("G4_AIR");
     G4Material *MatGe = nist->FindOrBuildMaterial("G4_Ge");
     G4Material *MatAl = nist->FindOrBuildMaterial("G4_Al");
+
+    G4Material *MatSample = nist->FindOrBuildMaterial(sampleMaterial);
+
     // G4Material *MatCu = nist->FindOrBuildMaterial("G4_Cu");
     // G4Material *MatVac = nist->FindOrBuildMaterial("G4_Galactic");
 
@@ -83,6 +97,11 @@ G4VPhysicalVolume *EDetectorConstruction::Construct()
     munionDetector->Voxelize();
     logicDetector = new G4LogicalVolume(munionDetector, MatGe, "logicDetector");
     G4VPhysicalVolume *physDetector = new G4PVPlacement(0, G4ThreeVector(0., 0., -capThickness -frontSpace -frontDeadLayer -0.5 * detectorSensitiveLength), logicDetector, "physDetector", logicWorld, false, 0, checkOverlaps);
+
+    // Sample
+    G4Tubs *solidSample = new G4Tubs("solidSample", 0., 0.5 * sampleDiameter, 0.5 * sampleThickness, 0. * deg, sliceAngle);
+    G4LogicalVolume *logicSample = new G4LogicalVolume(solidSample, MatSample, "logicSample");
+    G4VPhysicalVolume *physSample = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.5 * sampleThickness), logicSample, "physSample", logicWorld, false, 0, checkOverlaps);
 
     // Show pretty colors in the visualization
     G4VisAttributes *capVisAtt = new G4VisAttributes(G4Color(0.0, 0.0, 1.0, 0.5));

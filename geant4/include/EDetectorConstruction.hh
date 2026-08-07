@@ -40,6 +40,9 @@ private:
     G4GenericMessenger *fMessenger;
     G4double frontDeadLayerR, sideDeadLayerR, frontSpaceR, capThicknessR;
 
+    G4String sampleMaterial;
+    G4double sampleDiameterR, sampleThicknessR;
+
     virtual void ConstructSDandField();
 };
 

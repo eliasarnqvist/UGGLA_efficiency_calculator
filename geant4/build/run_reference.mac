@@ -1,0 +1,32 @@
+/run/numberOfThreads 1
+
+/E_run_settings/fileName ../output/Ti.root
+
+/run/reinitializeGeometry
+/run/initialize
+
+/process/had/rdm/thresholdForVeryLongDecayTime 1.0e+60 year
+/gun/particle ion
+
+/E_run_settings/initialize
+
+/E_run_settings/histogramName sc46
+/gun/ion 21 46 0 0
+/process/had/rdm/nucleusLimits 46 46 21 21
+/run/printProgress 1000
+/run/beamOn 10000
+
+/E_run_settings/histogramName sc47
+/gun/ion 21 47 0 0
+/process/had/rdm/nucleusLimits 47 47 21 21
+/run/printProgress 1000
+/run/beamOn 10000
+
+/E_run_settings/histogramName sc48
+/gun/ion 21 48 0 0
+/process/had/rdm/nucleusLimits 48 48 21 21
+/run/printProgress 1000
+/run/beamOn 10000
+
+/E_run_settings/finalize
+
